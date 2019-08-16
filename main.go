@@ -17,7 +17,7 @@ func testServer() {
 	}()
 
 	go func() {
-		loggerClient := logger.GetLoggerPrefix("client")
+		loggerClient := logger.GetPrefixLogger("client")
 		client := &net.Client{}
 		client.OnConnError(func(e error) {
 			loggerClient.PrintError(e)
@@ -39,10 +39,10 @@ func testServer() {
 	}
 }
 func testLogger() {
-	loggerTest := logger.GetLoggerPrefix("test")
+	loggerTest := logger.GetPrefixLogger("test")
 	loggerTest.PrintInfof("%s %d", "hello", 123)
 }
 func main() {
-	// testServer()
-	testLogger()
+	testServer()
+	// testLogger()
 }

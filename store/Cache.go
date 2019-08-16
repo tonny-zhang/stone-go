@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+var loggerCache = logger.GetPrefixLogger("storeCache")
+
 type cacheValue struct {
 	time time.Time
 	data map[string]interface{}
@@ -49,5 +51,5 @@ func GetCache(key string) map[string]interface{} {
 func DeleCache(key string) {
 	initCache()
 	delete(cache, key)
-	logger.PrintInfof("删除缓存[%s]", key)
+	loggerCache.PrintInfof("删除缓存[%s]", key)
 }

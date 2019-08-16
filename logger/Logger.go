@@ -26,9 +26,9 @@ func PrintInfof(format string, argv ...interface{}) {
 	log.Printf(format, argv...)
 }
 
-// GetLoggerPrefix get instance of LoggerPrefix
-func GetLoggerPrefix(prefix string) LoggerPrefix {
-	return LoggerPrefix{prefix}
+// GetPrefixLogger get instance of PrefixLogger
+func GetPrefixLogger(prefix string) PrefixLogger {
+	return PrefixLogger{prefix}
 }
 
 // Logger interface
@@ -38,25 +38,25 @@ type Logger interface {
 	PrintInfof(format string, argv ...interface{})
 }
 
-// LoggerPrefix struct
-type LoggerPrefix struct {
+// PrefixLogger struct
+type PrefixLogger struct {
 	prefix string
 }
 
 // PrintError print error
-func (logger *LoggerPrefix) PrintError(e error) {
+func (logger *PrefixLogger) PrintError(e error) {
 	log.Printf("[%s] %v", logger.prefix, e)
 }
 
 // PrintInfo print msg
-func (logger *LoggerPrefix) PrintInfo(msg string) {
+func (logger *PrefixLogger) PrintInfo(msg string) {
 	if !isInTest {
 		log.Printf("[%s] %s", logger.prefix, msg)
 	}
 }
 
 // PrintInfof print msg
-func (logger *LoggerPrefix) PrintInfof(format string, argv ...interface{}) {
+func (logger *PrefixLogger) PrintInfof(format string, argv ...interface{}) {
 	if !isInTest {
 		argv = append([]interface{}{logger.prefix}, argv...)
 		log.Printf("[%s] "+format, argv...)

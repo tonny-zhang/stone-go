@@ -19,7 +19,7 @@ func Test1(t *testing.T) {
 	go startService()
 
 	go func() {
-		loggerClient := logger.GetLoggerPrefix("client")
+		loggerClient := logger.GetPrefixLogger("client")
 		client := &net.Client{}
 		client.OnConnError(func(e error) {
 			t.Error(e)

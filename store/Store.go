@@ -10,7 +10,7 @@ import (
 	"stone/logger"
 )
 
-var loggerStore = logger.GetLoggerPrefix("store")
+var loggerStore = logger.GetPrefixLogger("store")
 
 // GetData read data from file
 func GetData(filepath string) (map[string]interface{}, error) {
