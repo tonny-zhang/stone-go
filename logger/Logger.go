@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-var isInTest = strings.LastIndex(os.Args[0], ".test") == len(os.Args[0])-5
+var isInTest = strings.LastIndex(os.Args[0], ".test") == len(os.Args[0])-5 && (len(os.Args) <= 1 || os.Args[1] != "console")
 
 // PrintError print error
 func PrintError(e error) {

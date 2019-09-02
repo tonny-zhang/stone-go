@@ -20,7 +20,7 @@ type Conf struct {
 
 // Start start service
 func Start(conf Conf) {
-	server := &net.Server{}
+	server := net.NewServer()
 	loggerServer := logger.GetPrefixLogger("serverStone")
 	server.OnListen(func() {
 		loggerServer.PrintInfof("listen at %s\n", server.Address())

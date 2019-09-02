@@ -1,21 +1,34 @@
 package store
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
+	"runtime"
 	"stone/logger"
+	"strconv"
 )
 
 var loggerStore = logger.GetPrefixLogger("store")
+
+func getGID() uint64 {
+	b := make([]byte, 64)
+	b = b[:runtime.Stack(b, false)]
+	b = bytes.TrimPrefix(b, []byte("goroutine "))
+	b = b[:bytes.IndexByte(b, ' ')]
+	n, _ := strconv.ParseUint(string(b), 10, 64)
+	return n
+}
 
 // GetData read data from file
 func GetData(filepath string) (map[string]interface{}, error) {
 	valCache := GetCache(filepath)
 	if valCache != nil {
+		loggerStore.PrintInfof("%d %s from cache", getGID(), filepath)
 		return valCache, nil
 	}
 	content, err := ioutil.ReadFile(filepath)
@@ -30,6 +43,7 @@ func GetData(filepath string) (map[string]interface{}, error) {
 		return nil, e1
 	}
 
+	loggerStore.PrintInfof("%d %s from file", getGID(), filepath)
 	SetCache(filepath, data)
 	return data, nil
 }
@@ -48,7 +62,16 @@ func Save(filepath string, data map[string]interface{}) error {
 	if data == nil {
 		return errors.New("data is nil")
 	}
-	content, e := json.Marshal(data)
+	dataOld, _ := GetData(filepath)
+	if dataOld != nil {
+		for key, val := range data {
+			dataOld[key] = val
+		}
+	} else {
+		dataOld = data
+	}
+
+	content, e := json.Marshal(dataOld)
 	if e != nil {
 		loggerStore.PrintError(e)
 		return e
@@ -67,6 +90,15 @@ func Save(filepath string, data map[string]interface{}) error {
 		return e
 	}
 
-	SetCache(filepath, data)
+	SetCache(filepath, dataOld)
+	return nil
+}
+
+// Del delete date
+func Del(filepath string) error {
+	if isFileExists(filepath) {
+		DeleCache(filepath)
+		return os.Remove(filepath)
+	}
 	return nil
 }

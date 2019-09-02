@@ -18,17 +18,17 @@ type Client struct {
 	onMessage   func(code int16, message string)
 }
 
-// OnConnError Called after connet server when error
+// OnConnError Called after connect server when error
 func (c *Client) OnConnError(callback func(err error)) {
 	c.onConnError = callback
 }
 
-// OnConnect Called after connet server
+// OnConnect Called after connect server
 func (c *Client) OnConnect(onConnect func()) {
 	c.onConnect = onConnect
 }
 
-// OnClose Called after connet closed
+// OnClose Called after connect closed
 func (c *Client) OnClose(onClose func()) {
 	c.onClose = onClose
 }
@@ -45,11 +45,11 @@ func (c *Client) Send(code int16, data []byte) error {
 	packer.Length = int32(len(data))
 	packer.Msg = data
 
-	bytes, e := packer.PackToByte()
+	b, e := packer.PackToByte()
 	if e != nil {
 		return e
 	}
-	_, e1 := c.conn.Write(bytes)
+	_, e1 := c.conn.Write(b)
 	return e1
 }
 
@@ -147,4 +147,9 @@ func (c *Client) work() {
 	if c.onClose != nil {
 		c.onClose()
 	}
+}
+
+// NewClient get instance of Client
+func NewClient() *Client {
+	return new(Client)
 }

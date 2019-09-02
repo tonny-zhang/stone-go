@@ -3,6 +3,7 @@ package store
 import (
 	"testing"
 
+	"gotest.tools/assert"
 	is "gotest.tools/assert/cmp"
 )
 
@@ -14,7 +15,7 @@ func TestSetCache(t *testing.T) {
 	SetCache(key, val)
 
 	data := GetCache(key)
-	is.DeepEqual(data, val)
+	assert.Assert(t, is.DeepEqual(data, val))
 
 	val2 := map[string]interface{}{
 		"name": "two",
@@ -23,9 +24,9 @@ func TestSetCache(t *testing.T) {
 	SetCache(key, val2)
 
 	data = GetCache(key)
-	is.DeepEqual(data, val2)
+	assert.Assert(t, is.DeepEqual(data, val2))
 
 	DeleCache(key)
 	data = GetCache(key)
-	is.Nil(data)
+	assert.Assert(t, is.Nil(data))
 }

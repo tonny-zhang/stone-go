@@ -5,8 +5,8 @@ import (
 	"net"
 )
 
-// Server tcp server
-type Server struct {
+// server tcp server
+type server struct {
 	address        string // Address to open connection: localhost:9999
 	config         *tls.Config
 	onListen       func()
@@ -17,37 +17,37 @@ type Server struct {
 }
 
 // OnNewClient Called right after server starts listening new client
-func (s *Server) OnNewClient(callback func(c *Client)) {
+func (s *server) OnNewClient(callback func(c *Client)) {
 	s.onNewClient = callback
 }
 
 // OnClientClosed Called right after connection closed
-func (s *Server) OnClientClosed(callback func(c *Client)) {
+func (s *server) OnClientClosed(callback func(c *Client)) {
 	s.onClientClosed = callback
 }
 
 // OnMessage Called when Client receives new message
-func (s *Server) OnMessage(callback func(c *Client, code int16, message string)) {
+func (s *server) OnMessage(callback func(c *Client, code int16, message string)) {
 	s.onMessage = callback
 }
 
 // OnListen emit on server listen
-func (s *Server) OnListen(callback func()) {
+func (s *server) OnListen(callback func()) {
 	s.onListen = callback
 }
 
 // OnError emit on server error
-func (s *Server) OnError(callback func(e error)) {
+func (s *server) OnError(callback func(e error)) {
 	s.onError = callback
 }
 
 // Address get address
-func (s *Server) Address() string {
+func (s *server) Address() string {
 	return s.address
 }
 
 // Listen starts network server
-func (s *Server) Listen(address string) {
+func (s *server) Listen(address string) {
 	s.address = address
 	var listener net.Listener
 	var err error
@@ -82,4 +82,9 @@ func (s *Server) Listen(address string) {
 		})
 		go client.work()
 	}
+}
+
+// NewServer get instance of server
+func NewServer() *server {
+	return new(server)
 }
