@@ -14,7 +14,7 @@ var isStarted = false
 
 func startService() {
 	if !isStarted {
-		go Start(conf)
+		go Start(conf, nil)
 		isStarted = true
 	}
 }
