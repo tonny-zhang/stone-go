@@ -19,11 +19,14 @@ type Conf struct {
 }
 
 // Start start service
-func Start(conf Conf) {
+func Start(conf Conf, onListen func()) {
 	server := net.NewServer()
 	loggerServer := logger.GetPrefixLogger("serverStone")
 	server.OnListen(func() {
 		loggerServer.PrintInfof("listen at %s\n", server.Address())
+		if onListen != nil {
+			onListen()
+		}
 	})
 	server.OnNewClient(func(c *net.Client) {
 		loggerServer.PrintInfof("client [%s] connect \n", c.GetKey())
