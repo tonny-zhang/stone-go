@@ -5,6 +5,8 @@ import (
 	"stone/logger"
 	"stone/net"
 	"stone/service"
+
+	"go-test-2/errorMyself/alarm"
 )
 
 var (
@@ -58,6 +60,8 @@ func testServer() {
 		})
 		client.Conn(conf.Host, conf.Port)
 	}()
+
+	alarm.GetError()
 
 	select {}
 }
