@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"io"
 	"net"
 )
 
@@ -102,6 +103,53 @@ func (c *Client) SetChecked() {
 // GetChecked get client isChecked
 func (c *Client) GetChecked() bool {
 	return c.isChecked
+}
+
+// 第2种处理socket拆包粘包问题
+func (c *Client) work2() {
+	if c.onConnect != nil {
+		c.onConnect()
+	}
+
+	for {
+		// 1. 先读取头部消息
+		// 2. 从头部消息里解析出编码及数据长度
+		// 3. 根据数据长度读取数据
+
+		headData := make([]byte, 4+4+2)
+		if _, err := io.ReadFull(c.conn, headData); err != nil {
+			fmt.Println("read msg head error ", err)
+			break
+		}
+		spliter := make([]byte, 4)
+		dataBuff := bytes.NewReader(headData)
+
+		var packer Packer
+		if err := binary.Read(dataBuff, binary.LittleEndian, &spliter); err != nil {
+			fmt.Println("unpack1 ", err)
+			break
+		}
+		if err := binary.Read(dataBuff, binary.LittleEndian, &packer.Code); err != nil {
+			fmt.Println("unpack2 ", err)
+			break
+		}
+		if err := binary.Read(dataBuff, binary.LittleEndian, &packer.Length); err != nil {
+			fmt.Println("unpack3 ", err)
+			break
+		}
+
+		if packer.Length > 0 {
+			packer.Msg = make([]byte, packer.Length)
+			if _, err := io.ReadFull(c.conn, packer.Msg); err != nil {
+				fmt.Println("read msg data error ", err)
+				break
+			}
+		}
+
+		if c.onMessage != nil {
+			c.onMessage(packer.Code, string(packer.Msg))
+		}
+	}
 }
 
 // Read client data from channel
