@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"go-test-2/errorMyself/alarm"
+	// "go-test-2/errorMyself/alarm"
 	"stone/logger"
 	"stone/net"
 	"stone/service"
@@ -63,7 +63,7 @@ func testServer() {
 	select {}
 }
 func testLoadOtherMod() {
-	alarm.GetError()
+	// alarm.GetError()
 }
 func testLogger() {
 	loggerTest := logger.GetPrefixLogger("test")
